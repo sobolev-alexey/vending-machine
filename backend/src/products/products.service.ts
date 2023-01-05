@@ -116,6 +116,7 @@ export class ProductsService {
       throw new HttpException('Not allowed', HttpStatus.METHOD_NOT_ALLOWED);
     }
 
+    console.log('Update', user);
     await this.productModel.findOneAndUpdate(
       { _id: id, sellerId: user._id },
       updateProductDto,
