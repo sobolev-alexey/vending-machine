@@ -53,12 +53,18 @@ export class AuthService {
   }
 
   async login(credentialsDto: CredentialsDto) {
-    const existingUser = await this.userModel.findOne({
-      username: credentialsDto.username,
-    });
-    const hashedPassword = await bcrypt.hash(credentialsDto.password, 8);
+    const existingUser = await this.userModel
+      .findOne({
+        username: credentialsDto.username,
+      })
+      .select('+password')
+      .exec();
 
-    if (!existingUser || hashedPassword !== existingUser.password) {
+    const passwordCompareResult = await bcrypt.compare(
+      credentialsDto.password,
+      existingUser.password,
+    );
+    if (!existingUser || !passwordCompareResult) {
       throw new HttpException('Wrong login credentials', HttpStatus.CONFLICT);
     }
 

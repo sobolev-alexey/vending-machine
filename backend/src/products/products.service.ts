@@ -5,8 +5,7 @@ import { Model } from 'mongoose';
 import { BuyProductDto, CreateProductDto, UpdateProductDto } from './dto';
 import { Product, ProductDocument } from './products.schema';
 import { User, UserDocument, UserPublic } from '../users/user.schema';
-
-type ProductKeys = keyof Product;
+import { UserRoles } from '../types';
 
 @Injectable()
 export class ProductsService {
@@ -41,24 +40,16 @@ export class ProductsService {
     // calculate change in an array of 5, 10, 20, 50 and 100 cent coins
     const change = this.getChange(user.deposit - price);
 
-    // update buyer deposit value
+    // update buyers deposit value
     await this.userModel.findOneAndUpdate(
       { _id: user._id },
-      {
-        $set: {
-          deposit: user.deposit - price,
-        },
-      },
+      { $inc: { deposit: -price, total: price } },
     );
 
     // add cost of purchased items to sellers account
     await this.userModel.findOneAndUpdate(
       { _id: product.sellerId },
-      {
-        $set: {
-          deposit: user.deposit + price,
-        },
-      },
+      { $inc: { total: price } },
     );
 
     return {
@@ -70,30 +61,41 @@ export class ProductsService {
     };
   }
 
-  async createProduct(
+  async createProducts(
     user: UserPublic,
-    createProductDto: CreateProductDto,
-  ): Promise<Product> {
-    const productExists = await this.productModel.findOne({
-      productName: createProductDto.productName,
-      sellerId: user._id,
-    });
+    createProductsDto: CreateProductDto[],
+  ): Promise<Product[]> {
+    const products = [];
+    for await (const createProductDto of createProductsDto) {
+      const existingProduct = await this.productModel.findOne({
+        productName: createProductDto.productName,
+        sellerId: user._id,
+      });
 
-    if (productExists) {
-      throw new HttpException('Product already exists', HttpStatus.CONFLICT);
+      if (existingProduct) {
+        existingProduct.amountAvailable += createProductDto.amountAvailable;
+        await existingProduct.save();
+        products.push(existingProduct);
+        // throw new HttpException('Product already exists', HttpStatus.CONFLICT);
+      } else {
+        const newProduct = new this.productModel({
+          amountAvailable: createProductDto.amountAvailable,
+          productName: createProductDto.productName,
+          cost: createProductDto.cost,
+          sellerId: user._id,
+        });
+
+        await newProduct.save();
+        products.push(newProduct);
+      }
     }
-
-    const createdProduct = new this.productModel({
-      amountAvailable: createProductDto.amountAvailable,
-      productName: createProductDto.productName,
-      cost: createProductDto.cost,
-      sellerId: user._id,
-    });
-
-    return createdProduct.save();
+    return products;
   }
 
   async getAllProducts(user: UserPublic): Promise<Product[]> {
+    if (user.role === UserRoles.buyer) {
+      return this.productModel.find({ amountAvailable: { $gt: 0 } }).exec();
+    }
     return this.productModel.find({ sellerId: user._id }).exec();
   }
 
@@ -106,23 +108,20 @@ export class ProductsService {
     id: string,
     updateProductDto: UpdateProductDto,
   ): Promise<Product> {
-    const allowedPropsToUpdate: ProductKeys[] = ['cost', 'productName'];
-
-    const isUpdateAllowed = Object.keys(updateProductDto).every((prop) =>
-      allowedPropsToUpdate.includes(prop as ProductKeys),
+    const shouldUpdateProp = Object.keys(updateProductDto).every((param) =>
+      ['amountAvailable', 'cost', 'productName'].includes(param),
     );
 
-    if (!isUpdateAllowed) {
-      throw new HttpException(
-        'Invalid properties to update',
-        HttpStatus.METHOD_NOT_ALLOWED,
-      );
+    if (!shouldUpdateProp) {
+      throw new HttpException('Not allowed', HttpStatus.METHOD_NOT_ALLOWED);
     }
 
-    return this.productModel.findOneAndUpdate(
+    console.log('Update', user);
+    await this.productModel.findOneAndUpdate(
       { _id: id, sellerId: user._id },
       updateProductDto,
     );
+    return this.productModel.findOne({ _id: id, sellerId: user._id });
   }
 
   async deleteProduct(user: UserPublic, id: string): Promise<Product> {

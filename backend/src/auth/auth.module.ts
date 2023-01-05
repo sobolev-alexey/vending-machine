@@ -13,16 +13,16 @@ import { User, UserSchema } from '../users/user.schema';
 
 @Module({
   imports: [
+    PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: '30d' },
+        signOptions: { expiresIn: '7d' },
       }),
     }),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-    PassportModule,
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy],
   controllers: [AuthController],

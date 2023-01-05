@@ -11,16 +11,17 @@ import {
 } from '@nestjs/common';
 import { BuyProductDto, CreateProductDto, UpdateProductDto } from './dto';
 import { ProductsService } from './products.service';
-import { UserPublic } from '../users/user.schema';
+import { RequestType, UserRoles } from '../types';
 
-type RequestType = {
-  user: UserPublic;
-};
+import { Permissions } from '../auth/permissions.decorator';
+import { PermissionsGuard } from '../auth/permissions.guard';
 
+@UseGuards(PermissionsGuard)
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
+  @Permissions(UserRoles.buyer)
   @Post('buy/:id')
   async buyProduct(
     @Request() req: RequestType,
@@ -40,14 +41,16 @@ export class ProductsController {
     return this.productsService.getProduct(req.user, id);
   }
 
+  @Permissions(UserRoles.seller)
   @Post()
-  async createProduct(
+  async createProducts(
     @Request() req: RequestType,
-    @Body() createProductDto: CreateProductDto,
+    @Body() createProductsDto: CreateProductDto[],
   ) {
-    return this.productsService.createProduct(req.user, createProductDto);
+    return this.productsService.createProducts(req.user, createProductsDto);
   }
 
+  @Permissions(UserRoles.seller)
   @Put(':id')
   async updateProduct(
     @Request() req: RequestType,
@@ -57,6 +60,7 @@ export class ProductsController {
     return this.productsService.updateProduct(req.user, id, updateProductDto);
   }
 
+  @Permissions(UserRoles.seller)
   @Delete(':id')
   async deleteProduct(@Request() req: RequestType, @Param('id') id: string) {
     return this.productsService.deleteProduct(req.user, id);
