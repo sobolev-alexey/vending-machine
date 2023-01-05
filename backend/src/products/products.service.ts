@@ -70,30 +70,41 @@ export class ProductsService {
     };
   }
 
-  async createProduct(
+  async createProducts(
     user: UserPublic,
-    createProductDto: CreateProductDto,
-  ): Promise<Product> {
-    const productExists = await this.productModel.findOne({
-      productName: createProductDto.productName,
-      sellerId: user._id,
-    });
+    createProductsDto: CreateProductDto[],
+  ): Promise<Product[]> {
+    const products = [];
+    for await (const createProductDto of createProductsDto) {
+      const existingProduct = await this.productModel.findOne({
+        productName: createProductDto.productName,
+        sellerId: user._id,
+      });
 
-    if (productExists) {
-      throw new HttpException('Product already exists', HttpStatus.CONFLICT);
+      if (existingProduct) {
+        existingProduct.amountAvailable += createProductDto.amountAvailable;
+        await existingProduct.save();
+        products.push(existingProduct);
+        // throw new HttpException('Product already exists', HttpStatus.CONFLICT);
+      } else {
+        const newProduct = new this.productModel({
+          amountAvailable: createProductDto.amountAvailable,
+          productName: createProductDto.productName,
+          cost: createProductDto.cost,
+          sellerId: user._id,
+        });
+
+        await newProduct.save();
+        products.push(newProduct);
+      }
     }
-
-    const createdProduct = new this.productModel({
-      amountAvailable: createProductDto.amountAvailable,
-      productName: createProductDto.productName,
-      cost: createProductDto.cost,
-      sellerId: user._id,
-    });
-
-    return createdProduct.save();
+    return products;
   }
 
   async getAllProducts(user: UserPublic): Promise<Product[]> {
+    if (user.role === UserRoles.buyer) {
+      return this.productModel.find({ amountAvailable: { $gt: 0 } }).exec();
+    }
     return this.productModel.find({ sellerId: user._id }).exec();
   }
 

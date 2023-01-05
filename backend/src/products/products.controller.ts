@@ -41,11 +41,11 @@ export class ProductsController {
   }
 
   @Post()
-  async createProduct(
+  async createProducts(
     @Request() req: RequestType,
-    @Body() createProductDto: CreateProductDto,
+    @Body() createProductsDto: CreateProductDto[],
   ) {
-    return this.productsService.createProduct(req.user, createProductDto);
+    return this.productsService.createProducts(req.user, createProductsDto);
   }
 
   @Put(':id')
