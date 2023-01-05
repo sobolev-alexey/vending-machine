@@ -5,8 +5,7 @@ import { Model } from 'mongoose';
 import { BuyProductDto, CreateProductDto, UpdateProductDto } from './dto';
 import { Product, ProductDocument } from './products.schema';
 import { User, UserDocument, UserPublic } from '../users/user.schema';
-
-type ProductKeys = keyof Product;
+import { UserRoles } from '../types';
 
 @Injectable()
 export class ProductsService {
@@ -41,24 +40,16 @@ export class ProductsService {
     // calculate change in an array of 5, 10, 20, 50 and 100 cent coins
     const change = this.getChange(user.deposit - price);
 
-    // update buyer deposit value
+    // update buyers deposit value
     await this.userModel.findOneAndUpdate(
       { _id: user._id },
-      {
-        $set: {
-          deposit: user.deposit - price,
-        },
-      },
+      { $inc: { deposit: -price, total: price } },
     );
 
     // add cost of purchased items to sellers account
     await this.userModel.findOneAndUpdate(
       { _id: product.sellerId },
-      {
-        $set: {
-          deposit: user.deposit + price,
-        },
-      },
+      { $inc: { total: price } },
     );
 
     return {

@@ -15,6 +15,9 @@ export class User {
   @Prop({ default: 0 })
   deposit: number;
 
+  @Prop({ default: 0 })
+  total: number;
+
   @Prop({ enum: Object.values(UserRoles), default: UserRoles.buyer })
   role: UserRoles;
 }
