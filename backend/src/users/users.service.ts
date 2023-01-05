@@ -11,17 +11,19 @@ export class UsersService {
 
   async depositToUserWallet(user: UserPublic, depositDto: DepositDto) {
     const userData = await this.userModel.findById(user._id).exec();
-    console.log('Deposit', userData, user);
 
-    return this.userModel
+    await this.userModel
       .findByIdAndUpdate(user._id, {
         $set: { deposit: userData.deposit + depositDto.deposit },
       })
       .exec();
+
+    return this.userModel.findById(user._id).exec();
   }
 
   async resetUserWallet(user: UserPublic) {
-    return this.userModel.findByIdAndUpdate(user._id, { deposit: 0 }).exec();
+    await this.userModel.findByIdAndUpdate(user._id, { deposit: 0 }).exec();
+    return this.userModel.findById(user._id).exec();
   }
 
   async getUser(user: UserPublic): Promise<UserPublic> {
