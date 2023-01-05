@@ -117,23 +117,19 @@ export class ProductsService {
     id: string,
     updateProductDto: UpdateProductDto,
   ): Promise<Product> {
-    const allowedPropsToUpdate: ProductKeys[] = ['cost', 'productName'];
-
-    const isUpdateAllowed = Object.keys(updateProductDto).every((prop) =>
-      allowedPropsToUpdate.includes(prop as ProductKeys),
+    const shouldUpdateProp = Object.keys(updateProductDto).every((param) =>
+      ['amountAvailable', 'cost', 'productName'].includes(param),
     );
 
-    if (!isUpdateAllowed) {
-      throw new HttpException(
-        'Invalid properties to update',
-        HttpStatus.METHOD_NOT_ALLOWED,
-      );
+    if (!shouldUpdateProp) {
+      throw new HttpException('Not allowed', HttpStatus.METHOD_NOT_ALLOWED);
     }
 
-    return this.productModel.findOneAndUpdate(
+    await this.productModel.findOneAndUpdate(
       { _id: id, sellerId: user._id },
       updateProductDto,
     );
+    return this.productModel.findOne({ _id: id, sellerId: user._id });
   }
 
   async deleteProduct(user: UserPublic, id: string): Promise<Product> {
