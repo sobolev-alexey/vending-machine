@@ -6,21 +6,22 @@ import {
   Post,
   Put,
   Request,
+  UseGuards,
 } from '@nestjs/common';
 
 import { UpdateUserDto } from './dto/update-user.dto';
 import { DepositDto } from './dto/deposit.dto';
 import { UsersService } from './users.service';
-import { UserPublic } from './user.schema';
-
-type RequestType = {
-  user: UserPublic;
-};
+import { RequestType, UserRoles } from '../types';
+import { Permissions } from '../auth/permissions.decorator';
+import { PermissionsGuard } from '../auth/permissions.guard';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @UseGuards(PermissionsGuard)
+  @Permissions(UserRoles.buyer)
   @Put('/deposit')
   async depositToUserWallet(
     @Request() req: RequestType,
@@ -29,6 +30,8 @@ export class UsersController {
     return this.usersService.depositToUserWallet(req.user, depositDto);
   }
 
+  @UseGuards(PermissionsGuard)
+  @Permissions(UserRoles.buyer)
   @Post('/reset')
   async resetUserWallet(@Request() req: RequestType) {
     return this.usersService.resetUserWallet(req.user);
