@@ -1,12 +1,15 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { InjectModel } from '@nestjs/mongoose';
-import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
-import { UserPublic, User, UserDocument } from '../users/user.schema';
+import { InjectModel } from '@nestjs/mongoose';
+
+import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
+
 import { CredentialsDto } from './dto/credentials.dto';
+import { UserPublic, User, UserDocument } from '../users/user.schema';
 
 // https://www.codemag.com/Article/2001081/Nest.js-Step-by-Step-Part-3-Users-and-Authentication
+// https://stackoverflow.com/questions/65956687/cannot-read-property-validateuser-of-undefined-nestjs-using-passportjs
 
 @Injectable()
 export class AuthService {
