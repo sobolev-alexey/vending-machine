@@ -9,7 +9,6 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtGuard } from './auth/jwt.guard';
 import { ProductsModule } from './products/products.module';
-import { validate } from './env.validation';
 
 @Module({
   imports: [
@@ -25,7 +24,6 @@ import { validate } from './env.validation';
     ProductsModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      validate,
     }),
   ],
   controllers: [AppController],
