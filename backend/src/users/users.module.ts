@@ -10,7 +10,8 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { User, UserSchema } from './user.schema';
 
-import { AuthService } from 'src/auth/auth.service';
+import { Product, ProductSchema } from '../products/products.schema';
+import { AuthService } from '../auth/auth.service';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { AuthService } from 'src/auth/auth.service';
         },
       },
     ]),
+    MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
