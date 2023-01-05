@@ -1,16 +1,15 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UsersController } from './users/users.controller';
-import { UsersService } from './users/users.service';
 import { UsersModule } from './users/users.module';
-import { AuthController } from './auth/auth.controller';
 import { AuthModule } from './auth/auth.module';
-import { ProductsController } from './products/products.controller';
+import { JwtGuard } from './auth/jwt.guard';
 import { ProductsModule } from './products/products.module';
+import { validate } from './env.validation';
 
 @Module({
   imports: [
@@ -24,13 +23,18 @@ import { ProductsModule } from './products/products.module';
     UsersModule,
     AuthModule,
     ProductsModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      validate,
+    }),
   ],
-  controllers: [
-    AppController,
-    UsersController,
-    AuthController,
-    ProductsController,
+  controllers: [AppController],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtGuard,
+    },
   ],
-  providers: [AppService, UsersService],
 })
 export class AppModule {}
