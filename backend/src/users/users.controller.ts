@@ -13,7 +13,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { DepositDto } from './dto/deposit.dto';
 import { UsersService } from './users.service';
 import { RequestType, UserRoles } from '../types';
-import { Permissions } from '../auth/permissions.decorator';
+import { Roles } from '../auth/roles.decorator';
 import { PermissionsGuard } from '../auth/permissions.guard';
 
 @Controller('api/v1/users')
@@ -21,7 +21,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @UseGuards(PermissionsGuard)
-  @Permissions(UserRoles.buyer)
+  @Roles(UserRoles.buyer)
   @Put('/deposit')
   async depositToUserWallet(
     @Request() req: RequestType,
@@ -31,7 +31,7 @@ export class UsersController {
   }
 
   @UseGuards(PermissionsGuard)
-  @Permissions(UserRoles.buyer)
+  @Roles(UserRoles.buyer)
   @Post('/reset')
   async resetUserWallet(@Request() req: RequestType) {
     return this.usersService.resetUserWallet(req.user);

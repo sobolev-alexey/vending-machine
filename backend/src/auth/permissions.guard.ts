@@ -2,6 +2,7 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { RequestType, UserRoles } from '../types';
 
+//https://docs.nestjs.com/guards
 @Injectable()
 export class PermissionsGuard implements CanActivate {
   constructor(private reflector: Reflector) {}

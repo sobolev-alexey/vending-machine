@@ -90,15 +90,12 @@ export class ProductsService {
     return products;
   }
 
-  async getAllProducts(user: UserPublic): Promise<Product[]> {
-    if (user.role === UserRoles.buyer) {
-      return this.productModel.find({ amountAvailable: { $gt: 0 } }).exec();
-    }
-    return this.productModel.find({ sellerId: user._id }).exec();
+  async getAllProducts(): Promise<Product[]> {
+    return this.productModel.find({ amountAvailable: { $gt: 0 } }).exec();
   }
 
-  async getProduct(user: UserPublic, id: string): Promise<Product> {
-    return this.productModel.findOne({ _id: id, sellerId: user._id });
+  async getProduct(id: string): Promise<Product> {
+    return this.productModel.findOne({ _id: id });
   }
 
   async updateProduct(

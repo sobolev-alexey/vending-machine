@@ -13,8 +13,9 @@ import { ApiTags, ApiResponse } from '@nestjs/swagger';
 import { BuyProductDto, CreateProductDto, UpdateProductDto } from './dto';
 import { ProductsService } from './products.service';
 import { RequestType, UserRoles } from '../types';
+import { Public } from '../auth/public.metadata';
 
-import { Permissions } from '../auth/permissions.decorator';
+import { Roles } from '../auth/roles.decorator';
 import { PermissionsGuard } from '../auth/permissions.guard';
 
 @ApiTags('Products')
@@ -23,7 +24,7 @@ import { PermissionsGuard } from '../auth/permissions.guard';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-  @Permissions(UserRoles.buyer)
+  @Roles(UserRoles.buyer)
   @Post('buy/:id')
   async buyProduct(
     @Request() req: RequestType,
@@ -33,17 +34,19 @@ export class ProductsController {
     return this.productsService.buyProduct(req.user, id, buyProductDto);
   }
 
+  @Public()
   @Get()
-  async getAllProducts(@Request() req: RequestType) {
-    return this.productsService.getAllProducts(req.user);
+  async getAllProducts() {
+    return this.productsService.getAllProducts();
   }
 
+  @Public()
   @Get(':id')
-  async getProduct(@Request() req: RequestType, @Param('id') id: string) {
-    return this.productsService.getProduct(req.user, id);
+  async getProduct(@Param('id') id: string) {
+    return this.productsService.getProduct(id);
   }
 
-  @Permissions(UserRoles.seller)
+  @Roles(UserRoles.seller)
   @Post()
   async createProducts(
     @Request() req: RequestType,
@@ -52,7 +55,7 @@ export class ProductsController {
     return this.productsService.createProducts(req.user, createProductsDto);
   }
 
-  @Permissions(UserRoles.seller)
+  @Roles(UserRoles.seller)
   @Put(':id')
   async updateProduct(
     @Request() req: RequestType,
@@ -62,7 +65,7 @@ export class ProductsController {
     return this.productsService.updateProduct(req.user, id, updateProductDto);
   }
 
-  @Permissions(UserRoles.seller)
+  @Roles(UserRoles.seller)
   @Delete(':id')
   async deleteProduct(@Request() req: RequestType, @Param('id') id: string) {
     return this.productsService.deleteProduct(req.user, id);
