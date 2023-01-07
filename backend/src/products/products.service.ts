@@ -43,7 +43,7 @@ export class ProductsService {
     // update buyers deposit value
     await this.userModel.findOneAndUpdate(
       { _id: user._id },
-      { $inc: { deposit: -price, total: price } },
+      { $inc: { deposit: -user.deposit, total: price } },
     );
 
     // add cost of purchased items to sellers account
@@ -69,6 +69,7 @@ export class ProductsService {
     for await (const createProductDto of createProductsDto) {
       const existingProduct = await this.productModel.findOne({
         productName: createProductDto.productName,
+        shelfLocation: createProductDto?.shelfLocation,
         sellerId: user._id,
       });
 
@@ -76,12 +77,9 @@ export class ProductsService {
         existingProduct.amountAvailable += createProductDto.amountAvailable;
         await existingProduct.save();
         products.push(existingProduct);
-        // throw new HttpException('Product already exists', HttpStatus.CONFLICT);
       } else {
         const newProduct = new this.productModel({
-          amountAvailable: createProductDto.amountAvailable,
-          productName: createProductDto.productName,
-          cost: createProductDto.cost,
+          ...createProductDto,
           sellerId: user._id,
         });
 
@@ -92,15 +90,12 @@ export class ProductsService {
     return products;
   }
 
-  async getAllProducts(user: UserPublic): Promise<Product[]> {
-    if (user.role === UserRoles.buyer) {
-      return this.productModel.find({ amountAvailable: { $gt: 0 } }).exec();
-    }
-    return this.productModel.find({ sellerId: user._id }).exec();
+  async getAllProducts(): Promise<Product[]> {
+    return this.productModel.find({ amountAvailable: { $gt: 0 } }).exec();
   }
 
-  async getProduct(user: UserPublic, id: string): Promise<Product> {
-    return this.productModel.findOne({ _id: id, sellerId: user._id });
+  async getProduct(id: string): Promise<Product> {
+    return this.productModel.findOne({ _id: id });
   }
 
   async updateProduct(
@@ -116,7 +111,6 @@ export class ProductsService {
       throw new HttpException('Not allowed', HttpStatus.METHOD_NOT_ALLOWED);
     }
 
-    console.log('Update', user);
     await this.productModel.findOneAndUpdate(
       { _id: id, sellerId: user._id },
       updateProductDto,

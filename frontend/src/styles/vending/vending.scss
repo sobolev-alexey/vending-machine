@@ -1,0 +1,291 @@
+.vendingMachine {
+  border: 1px solid black;
+  display: flex;
+  margin: auto auto 0 auto;
+  padding: 2rem;
+  background: linear-gradient(
+    45deg,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(69, 69, 69, 1) 100%
+  );
+  position: relative;
+}
+
+.trash {
+  max-height: 20rem;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 998;
+  transform: translate(-130%, 10%);
+}
+
+.poster {
+  position: absolute;
+  z-index: 998;
+  top: 0;
+  right: 0;
+  transform: translate(150%, 30%);
+  background-color: black;
+  color: white;
+  font-family: Impact, "Arial Narrow Bold", sans-serif;
+  font-size: 2.5rem;
+  padding: 1.5rem 2rem;
+  height: 300px;
+}
+
+.hand {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: 999;
+  width: 80%;
+  transform: translate(0%, 25%);
+}
+
+.money {
+  position: absolute;
+  z-index: 1000;
+  bottom: 1rem;
+  right: 5rem;
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  column-gap: 10px;
+  max-width: 195px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.screen {
+  position: relative;
+  font-family: "digital-7 (mono)";
+  text-align: right;
+  height: 2rem;
+  background-color: darkgreen;
+  padding: 0.2rem 0.4rem;
+  margin: 1rem 0;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.screen.scrolling > span {
+  text-align: left;
+}
+
+.screen > span {
+  flex: 1;
+  white-space: nowrap;
+}
+
+.screen:before {
+  border: 2px solid rgba(77, 77, 77, 1);
+  content: " ";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  background: rgb(255, 255, 255);
+  background: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.2) 70%,
+    rgba(255, 255, 255, 0.1) 99%
+  );
+}
+
+.keypadContainer {
+  flex-shrink: 0;
+  width: 6rem;
+}
+
+.keypad {
+  background: rgb(164, 164, 164);
+  background: linear-gradient(
+    45deg,
+    rgba(164, 164, 164, 1) 0%,
+    rgba(187, 187, 187, 1) 41%,
+    rgba(255, 255, 255, 1) 76%,
+    rgba(187, 187, 187, 1) 100%
+  );
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+.keyPadRow {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.products {
+  position: relative;
+  background-color: black;
+  border-radius: 1rem;
+  margin-right: 2rem;
+  padding: 1rem 0 0 0;
+  overflow: hidden;
+}
+
+.products:before {
+  border: 2px solid rgba(77, 77, 77, 1);
+  content: " ";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border-radius: 1rem;
+  z-index: 999;
+  background: rgb(255, 255, 255);
+  background: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.3) 64%,
+    rgba(255, 255, 255, 0.1) 99%
+  );
+}
+
+.shelf {
+  display: flex;
+  margin-bottom: 0.4rem;
+  min-width: 320px;
+}
+
+.shelf:last-child {
+  margin: 0;
+}
+
+.door {
+  height: 5rem;
+  background: #333;
+  border-radius: 1rem;
+  box-shadow: inset 5px 3px 5px 5px rgba(33, 33, 33, 1);
+}
+
+.doorFrame {
+  margin: 2rem 4rem 0 2rem;
+  background: linear-gradient(
+    45deg,
+    rgba(75, 75, 75, 1) 0%,
+    rgba(50, 50, 50, 1) 100%
+  );
+  padding: 0.25rem;
+  border-radius: 1rem;
+}
+
+.coin1 {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  border: 6px solid rgba(217, 205, 40, 0.7);
+  background: rgb(142, 142, 142);
+  background: linear-gradient(
+    45deg,
+    rgba(142, 142, 142, 1) 53%,
+    rgba(201, 201, 201, 1) 70%,
+    rgba(134, 134, 134, 1) 83%
+  );
+}
+
+.coin2 {
+  width: 4.4rem;
+  height: 4.4rem;
+  border-radius: 50%;
+  background: rgb(217, 205, 40);
+  background: linear-gradient(
+    45deg,
+    rgba(217, 205, 40, 1) 53%,
+    rgba(241, 234, 149, 1) 70%,
+    rgba(223, 208, 44, 1) 83%
+  );
+}
+
+.coin3 {
+  width: 3.8rem;
+  height: 3.8rem;
+  border-radius: 50%;
+  background: rgb(217, 205, 40);
+  background: linear-gradient(
+    45deg,
+    rgba(217, 205, 40, 1) 53%,
+    rgba(241, 234, 149, 1) 70%,
+    rgba(223, 208, 44, 1) 83%
+  );
+}
+
+.coin4 {
+  width: 3.3rem;
+  height: 3.3rem;
+  border-radius: 50%;
+  background: rgb(217, 205, 40);
+  background: linear-gradient(
+    45deg,
+    rgba(217, 205, 40, 1) 53%,
+    rgba(241, 234, 149, 1) 70%,
+    rgba(223, 208, 44, 1) 83%
+  );
+}
+
+.coin5 {
+  width: 3.6rem;
+  height: 3.6rem;
+  border-radius: 50%;
+  background: rgb(236, 177, 151);
+  background: linear-gradient(
+    45deg,
+    rgba(236, 177, 151, 1) 53%,
+    rgba(255, 209, 181, 1) 70%,
+    rgba(236, 177, 151, 1) 83%
+  );
+}
+
+.paymentContainer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.changeButton {
+  width: 3rem;
+  height: 3rem;
+  text-align: center;
+  border-radius: 50%;
+  background: rgb(158, 2, 2);
+  background: linear-gradient(
+    45deg,
+    rgba(158, 2, 2, 1) 53%,
+    rgba(214, 85, 85, 1) 70%,
+    rgba(158, 2, 2, 1) 83%
+  );
+}
+
+.coinSlot {
+  height: 3rem;
+  width: 0.5rem;
+  background-color: black;
+  border-radius: 0;
+  margin: 0 0.4rem;
+  display: inline-block;
+}
+
+@media (min-width: 768px) {
+  .hand {
+    transform: translate(50%, 25%);
+    width: 100%;
+  }
+  .money {
+    bottom: 2rem;
+    right: -30px;
+  }
+  .screen {
+    font-size: 2rem;
+  }
+  .keypadContainer {
+    width: 10rem;
+  }
+  .shelf {
+    height: 5.5rem;
+  }
+}
