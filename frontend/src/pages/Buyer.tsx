@@ -1,12 +1,13 @@
 import { useContext, useEffect, useState } from 'react';
-// import { useParams } from 'react-router-dom';
-import Vending from '../components/vending/Vending';
+import { useNavigate } from "react-router-dom";
 import { AppContext } from '../context/globalState';
 import callApi from '../utils/callApi';
 import { successCallback, errorCallback } from '../utils/notification';
+import { Logout, Vending } from '../components';
 
 const Buyer = () => {
-  const { login, setProducts, setUser } = useContext(AppContext);
+  const { login, setProducts, logout } = useContext(AppContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function loadData() {
@@ -51,8 +52,14 @@ const Buyer = () => {
     await callApi('post', 'users/reset');
   }
 
+  const logoutCallback = async () => {
+    await logout();
+    navigate("/login");
+  }
+
   return (
     <div className='vending-machine-wrapper'>
+      <Logout callback={logoutCallback} />
       <Vending 
         depositCallback={depositFunds}
         buyCallback={buyProduct}

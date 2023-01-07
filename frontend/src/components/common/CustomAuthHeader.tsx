@@ -6,17 +6,24 @@ const CustomAuthHeader = ({ pathname }: { pathname: string }) => {
       {(() => {
         switch (pathname) {
           case "/login":
+          case "/buyer":
           case "/":
             return (
-              <Link className="login-btn" to="/register">
-                Register
-              </Link>
+              <span>
+                or&nbsp;
+                <Link className="login-btn" to="/register">
+                  Register
+                </Link>
+              </span>
             );
           case "/register":
             return (
-              <Link className="login-btn" to="/">
-                Log in
-              </Link>
+              <span>
+              or&nbsp;
+                <Link className="login-btn" to="/">
+                  Log in
+                </Link>
+              </span>
             );
           default:
             return;
