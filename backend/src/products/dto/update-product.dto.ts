@@ -12,4 +12,12 @@ export class UpdateProductDto {
   @IsOptional()
   @IsString()
   productName?: string;
+
+  @IsOptional()
+  @IsString()
+  image: string;
+
+  @IsOptional()
+  @IsString()
+  shelfLocation: string;
 }
