@@ -9,6 +9,7 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
+import { ApiTags, ApiResponse } from '@nestjs/swagger';
 import { BuyProductDto, CreateProductDto, UpdateProductDto } from './dto';
 import { ProductsService } from './products.service';
 import { RequestType, UserRoles } from '../types';
@@ -16,8 +17,9 @@ import { RequestType, UserRoles } from '../types';
 import { Permissions } from '../auth/permissions.decorator';
 import { PermissionsGuard } from '../auth/permissions.guard';
 
+@ApiTags('Products')
 @UseGuards(PermissionsGuard)
-@Controller('products')
+@Controller('api/v1/products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
