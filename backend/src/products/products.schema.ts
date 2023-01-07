@@ -16,6 +16,12 @@ export class Product {
   @Prop({ required: true })
   productName: string;
 
+  @Prop({ required: false })
+  image: string;
+
+  @Prop({ required: false })
+  shelfLocation: string;
+
   @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: User.name })
   sellerId: User;
 }
