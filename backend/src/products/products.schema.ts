@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
 
-import { User } from '../users/user.schema';
+import { User, UserPublic } from '../users/user.schema';
 
 export type ProductDocument = Product & Document;
 
@@ -23,7 +23,7 @@ export class Product {
   shelfLocation: string;
 
   @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: User.name })
-  sellerId: User;
+  sellerId: UserPublic;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);

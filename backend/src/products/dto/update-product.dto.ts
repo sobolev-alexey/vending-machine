@@ -3,7 +3,7 @@ import { IsNumber, IsOptional, IsString } from 'class-validator';
 export class UpdateProductDto {
   @IsOptional()
   @IsNumber()
-  amountAvailable: number;
+  amountAvailable?: number;
 
   @IsOptional()
   @IsNumber()
@@ -15,9 +15,9 @@ export class UpdateProductDto {
 
   @IsOptional()
   @IsString()
-  image: string;
+  image?: string;
 
   @IsOptional()
   @IsString()
-  shelfLocation: string;
+  shelfLocation?: string;
 }
