@@ -57,14 +57,9 @@ export class AuthService {
       .findOne({
         username: credentialsDto.username,
       })
-      .select('+password')
       .exec();
 
-    const passwordCompareResult = await bcrypt.compare(
-      credentialsDto.password,
-      existingUser.password,
-    );
-    if (!existingUser || !passwordCompareResult) {
+    if (!existingUser) {
       throw new HttpException('Wrong login credentials', HttpStatus.CONFLICT);
     }
 
