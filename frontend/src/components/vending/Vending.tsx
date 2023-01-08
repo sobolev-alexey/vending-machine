@@ -11,7 +11,7 @@ type ItemProps = {
   cost: number,
   shelfLocation: string,
   image: string,
-  amountAvailable?: number,
+  amountAvailable: number,
 };
 
 type ShelveProps = {
@@ -45,7 +45,7 @@ function Vending({ depositCallback, buyCallback, resetCallback }:
         image: "empty",
         amountAvailable: 0,
       });
-      const items = products?.filter(item => item?.shelfLocation.startsWith(letter)) || [];
+      const items = products?.filter((item: ItemProps) => item?.shelfLocation.startsWith(letter)) || [];
       const filled = items.concat(empty).slice(0, 4)
       return { letter, items: filled }});
     
