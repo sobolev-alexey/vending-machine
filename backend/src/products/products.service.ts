@@ -54,7 +54,7 @@ export class ProductsService {
 
     return {
       change,
-      totalSpent: price,
+      totalSpent: user.total + price,
       productId: product._id,
       productName: product.productName,
       quantity: buyProductDto.quantity,
@@ -67,17 +67,12 @@ export class ProductsService {
   ): Promise<Product[]> {
     const products = [];
     for await (const createProductDto of createProductsDto) {
-      const existingProduct = await this.productModel.findOne({
-        productName: createProductDto.productName,
+      const existingProducts: Product[] = await this.productModel.find({
         shelfLocation: createProductDto?.shelfLocation,
-        sellerId: user._id,
+        amountAvailable: { $gt: 0 },
       });
 
-      if (existingProduct) {
-        existingProduct.amountAvailable += createProductDto.amountAvailable;
-        await existingProduct.save();
-        products.push(existingProduct);
-      } else {
+      if (!existingProducts?.length) {
         const newProduct = new this.productModel({
           ...createProductDto,
           sellerId: user._id,
@@ -90,7 +85,10 @@ export class ProductsService {
     return products;
   }
 
-  async getAllProducts(): Promise<Product[]> {
+  async getAllProducts(user?: UserPublic): Promise<Product[]> {
+    if (user?.role === UserRoles.seller) {
+      return this.productModel.find({ sellerId: user._id }).exec();
+    }
     return this.productModel.find({ amountAvailable: { $gt: 0 } }).exec();
   }
 
@@ -104,7 +102,13 @@ export class ProductsService {
     updateProductDto: UpdateProductDto,
   ): Promise<Product> {
     const shouldUpdateProp = Object.keys(updateProductDto).every((param) =>
-      ['amountAvailable', 'cost', 'productName'].includes(param),
+      [
+        'amountAvailable',
+        'cost',
+        'productName',
+        'image',
+        'shelfLocation',
+      ].includes(param),
     );
 
     if (!shouldUpdateProp) {
