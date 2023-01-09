@@ -28,11 +28,10 @@ const Buyer = () => {
     return true;
   }
   
-  const buyProduct = async (id: string, quantity: number = 1): Promise<boolean> => {
+  const buyProduct = async (id: string, quantity: number = 1): Promise<void> => {
     const response = await callApi('post', `products/buy/${id}`, { quantity });
     if (response?.error) {
       errorCallback(response?.error?.response?.data?.error);
-      return false;
     }
     const coins = [5, 10, 20, 50, 100];
     const formatter = new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" });
@@ -51,8 +50,6 @@ const Buyer = () => {
       setProducts(productsResponse);
     }
     infoCallback('Total spent', formatter.format(response.totalSpent / 100));
-
-    return true;
   }
   
   const resetWallet = async (): Promise<boolean> => {
