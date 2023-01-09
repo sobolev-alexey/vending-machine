@@ -34,7 +34,7 @@ export class ProductsController {
     return this.productsService.buyProduct(req.user, id, buyProductDto);
   }
 
-  // @Public()
+  @Public()
   @Get()
   async getAllProducts() {
     return this.productsService.getAllProducts();
