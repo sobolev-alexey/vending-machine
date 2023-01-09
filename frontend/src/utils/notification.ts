@@ -18,3 +18,11 @@ export const successCallback = (message?: string, description?: string) => {
     description
   });
 }
+
+export const infoCallback = (message?: string, description?: string) => {
+  notification['info']({
+    duration: 10,
+    message,
+    description
+  });
+}
