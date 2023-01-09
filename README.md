@@ -4,13 +4,13 @@
 
 Buyer page
 
-<img src="./screenshots/buyer.png">
+<img src="./screenshots/buyer.gif">
+
+<br />  
 
 Seller page
 
-<img src="./screenshots/seller.png">
-
-[More screenshots](./documentation/screenshots/client/README.md)
+<img src="./screenshots/seller.jpg">
 
 <br />  
 <hr>
