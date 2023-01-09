@@ -15,7 +15,7 @@ type ShelveProps = {
 function Vending({ depositCallback, buyCallback, resetCallback }: 
   {
     depositCallback: (value: number) => Promise<boolean>, 
-    buyCallback: (id: string, quantity?: number) => Promise<boolean>, 
+    buyCallback: (id: string, quantity?: number) => Promise<void>, 
     resetCallback: () => Promise<boolean>
   }  
 ) {
@@ -78,7 +78,7 @@ function Vending({ depositCallback, buyCallback, resetCallback }:
     setScreen("BALANCE");
   };
 
-  const dispense = async (inputCode: string) => {
+  const dispense = (inputCode: string) => {
     const shelf = shelves.find((shelf) => shelf.letter === inputCode[0]);
     const index = Number(inputCode[1]) - 1;
     const product = shelf?.items[index];
@@ -86,14 +86,10 @@ function Vending({ depositCallback, buyCallback, resetCallback }:
     if (product == null || product.cost === 0) {
       displayMessage("INVALID");
     } else if (balance >= product.cost && product.amountAvailable > 0) {
-      const result = await buyCallback(product._id);
-      if (result) {
-        setBalance(0);
-        setScreen(balance - product.cost > 0 ? "CHANGE" : "BALANCE");
-        setDispensingId(product.shelfLocation);
-      } else {
-        displayMessage("INVALID");
-      }
+      buyCallback(product._id);
+      setBalance(0);
+      setScreen(balance - product.cost > 0 ? "CHANGE" : "BALANCE");
+      setDispensingId(product.shelfLocation);
     } else {
       displayMessage("INSUFFICIENT FUNDS");
     }
