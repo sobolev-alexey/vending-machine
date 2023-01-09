@@ -36,8 +36,13 @@ export class ProductsController {
 
   // @Public()
   @Get()
-  async getAllProducts(@Request() req: RequestType) {
-    return this.productsService.getAllProducts(req.user);
+  async getAllProducts() {
+    return this.productsService.getAllProducts();
+  }
+
+  @Get('/seller')
+  async getSellerProducts(@Request() req: RequestType) {
+    return this.productsService.getSellerProducts(req.user);
   }
 
   @Public()

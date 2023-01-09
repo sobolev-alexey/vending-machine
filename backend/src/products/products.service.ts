@@ -85,11 +85,15 @@ export class ProductsService {
     return products;
   }
 
-  async getAllProducts(user?: UserPublic): Promise<Product[]> {
+  async getAllProducts(): Promise<Product[]> {
+    return this.productModel.find({ amountAvailable: { $gt: 0 } }).exec();
+  }
+
+  async getSellerProducts(user?: UserPublic): Promise<Product[]> {
     if (user?.role === UserRoles.seller) {
       return this.productModel.find({ sellerId: user._id }).exec();
     }
-    return this.productModel.find({ amountAvailable: { $gt: 0 } }).exec();
+    throw new HttpException('Not allowed', HttpStatus.METHOD_NOT_ALLOWED);
   }
 
   async getProduct(id: string): Promise<Product> {
