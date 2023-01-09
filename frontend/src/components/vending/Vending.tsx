@@ -4,26 +4,19 @@ import { AppContext } from '../../context/globalState';
 import { scrollLeft } from "../../utils/text";
 import hand from "../../assets/img/hand.svg";
 import trash from "../../assets/img/trash.png";
-import { images, keyPad, ButtonValue, Screen } from './Config';
-
-type ItemProps = {
-  _id: string;
-  cost: number,
-  shelfLocation: string,
-  image: string,
-  amountAvailable: number,
-};
+import { images, shelves as shelveIndexes, keyPad, ButtonValue, Screen } from './Config';
+import { Product as ProductType } from '../../types/Product';
 
 type ShelveProps = {
   letter: string;
-  items: ItemProps[];
+  items: ProductType[];
 };
 
 function Vending({ depositCallback, buyCallback, resetCallback }: 
   {
-    depositCallback: (value: number) => Promise<void>, 
-    buyCallback: (id: string, quantity?: number) => Promise<void>, 
-    resetCallback: () => Promise<void>
+    depositCallback: (value: number) => Promise<boolean>, 
+    buyCallback: (id: string, quantity?: number) => Promise<boolean>, 
+    resetCallback: () => Promise<boolean>
   }  
 ) {
   const { products } = useContext(AppContext);
@@ -37,18 +30,20 @@ function Vending({ depositCallback, buyCallback, resetCallback }:
   const productsRef = useRef(null);
 
   useEffect(() => {
-    const shelves = ["A", "B", "C", "D", "E", "F"].map(letter => {
-      const empty = new Array(4).fill({
-        _id: ""+Math.random(),
-        cost: 0,
-        shelfLocation: ""+Math.random(),
-        image: "empty",
-        amountAvailable: 0,
+    const placeholder = {
+      _id: ""+Math.random(),
+      cost: 0,
+      image: "empty",
+      amountAvailable: 0,
+    };
+    const shelves = shelveIndexes.map(shelfRow => {
+      const items = Array.from({length: 4}, (x, i) => i + 1).map(shelfIndex => {
+        const shelfLocation = `${shelfRow}${shelfIndex}`;
+        const item = products?.find((prod: ProductType) => prod?.shelfLocation === shelfLocation);
+        return item || { ...placeholder, shelfLocation };
       });
-      const items = products?.filter((item: ItemProps) => item?.shelfLocation.startsWith(letter)) || [];
-      const filled = items.concat(empty).slice(0, 4)
-      return { letter, items: filled }});
-    
+      return { letter: shelfRow, items };
+    });
     setShelves(shelves);
   }, [JSON.stringify(products)]);
 
@@ -61,15 +56,17 @@ function Vending({ depositCallback, buyCallback, resetCallback }:
     }
   };
 
-  const addMoney = (amount: number) => {
-    setScreen("BALANCE");
-    setBalance(balance + amount);
-    depositCallback(amount);
+  const addMoney = async (amount: number) => {
+    const result = await depositCallback(amount);
+    if (result) {
+      setScreen("BALANCE");
+      setBalance(balance + amount);
+    }
   };
 
-  const withdrawMoney = () => {
-    setBalance(0);
-    resetCallback();
+  const withdrawMoney = async () => {
+    const result = await resetCallback();
+    result && setBalance(0);
   };
 
   const displayMessage = async (msg: string) => {
@@ -81,7 +78,7 @@ function Vending({ depositCallback, buyCallback, resetCallback }:
     setScreen("BALANCE");
   };
 
-  const dispense = (inputCode: string) => {
+  const dispense = async (inputCode: string) => {
     const shelf = shelves.find((shelf) => shelf.letter === inputCode[0]);
     const index = Number(inputCode[1]) - 1;
     const product = shelf?.items[index];
@@ -89,10 +86,14 @@ function Vending({ depositCallback, buyCallback, resetCallback }:
     if (product == null || product.cost === 0) {
       displayMessage("INVALID");
     } else if (balance >= product.cost && product.amountAvailable > 0) {
-      setBalance(0);
-      setScreen(balance - product.cost > 0 ? "CHANGE" : "BALANCE");
-      setDispensingId(product.shelfLocation);
-      buyCallback(product._id);
+      const result = await buyCallback(product._id);
+      if (result) {
+        setBalance(0);
+        setScreen(balance - product.cost > 0 ? "CHANGE" : "BALANCE");
+        setDispensingId(product.shelfLocation);
+      } else {
+        displayMessage("INVALID");
+      }
     } else {
       displayMessage("INSUFFICIENT FUNDS");
     }
@@ -119,7 +120,7 @@ function Vending({ depositCallback, buyCallback, resetCallback }:
           <div className="products" ref={productsRef}>
             {shelves?.map((shelf, index) => (
               <div className="shelf" key={index}>
-                {shelf?.items?.map((item: ItemProps, i: number) => {
+                {shelf?.items?.map((item: ProductType, i: number) => {
                   return (
                     <Product
                       key={item.shelfLocation + i}
