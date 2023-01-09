@@ -9,12 +9,12 @@ import callApi from '../utils/callApi';
 const Login = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isLoggedIn, login, successCallback, errorCallback } = useContext(AppContext);
+  const { isLoggedIn, login, successCallback, errorCallback, user } = useContext(AppContext);
   const pathname = location.pathname;
   const [loginForm] = Form.useForm();
 
   useEffect(() => {
-    isLoggedIn && navigate("/buyer");
+    isLoggedIn && user && navigate(`/${user.role}` || "/buyer");
   }, [isLoggedIn]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onFinish = async ({ username, password }: { username: string, password: string }) => {
@@ -24,7 +24,11 @@ const Login = () => {
     } else {
       successCallback('Login successful', '');
       await login({ token: response?.access_token });
-      navigate('/buyer');
+      const userResponse = await callApi('get', 'users'); 
+      if (!userResponse?.error) {
+        await login({ userData: userResponse });
+        navigate(`/${userResponse.role}`);
+      }
     }
   };
 

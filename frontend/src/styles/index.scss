@@ -94,18 +94,97 @@ button {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
+  .login-form {
+    width: 330px;
+  }
+  .ant-col-rtl .login-form-forgot {
+    float: left;
+  }
+  .login-form-button {
+    width: 100%;
+  }
+  
+  .login-header-wrapper {
+    text-align: center;
+  } 
 }
 
-.login-form {
-  width: 330px;
-}
-.ant-col-rtl .login-form-forgot {
-  float: left;
-}
-.login-form-button {
+.seller-wrapper {
+  display: flex;
+  overflow: auto;
+  height: 100%;
   width: 100%;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background-color: #777777;
+  background-image: url("../assets/beige-paper.png");
+
+  .seller-content-wrapper {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  
+    .mode-selector {
+      margin: 0 40px 40px;
+    }
+  
+    .seller-content {
+      display: flex;
+      overflow: scroll;
+      height: 740px;
+      width: 100%;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+
+      .products-form {
+        .ant-space-horizontal {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          // justify-content: center;
+          justify-content: space-between;
+
+          .ant-form-item-control-input-content {
+            display: flex;
+          }
+
+          .ant-select.ant-select-in-form-item {
+            width: 80px;
+          }
+
+          .ant-select-selection-item {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+          }
+
+          .ant-space-item:last-child {
+            height: 47px;
+
+            .anticon {
+              font-size: 25px;
+              padding-bottom: 10px;
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
-.login-header-wrapper {
-  text-align: center;
+.ant-select-item-option-content {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  padding-left: 10px;
 }
+
+
+
+

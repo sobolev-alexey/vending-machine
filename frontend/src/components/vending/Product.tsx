@@ -1,12 +1,5 @@
 import { Price, ProductAnimation } from ".";
-
-type ProductProps = {
-  cost: number;
-  code: string;
-  id: string;
-  image: string;
-  dispensingId: string | null;
-};
+import { ProductProps } from '../../types/Product';
 
 function Product({
   cost,

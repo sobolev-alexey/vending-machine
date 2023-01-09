@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Form, Input, Button } from "antd";
+import { Form, Input, Button, Select } from "antd";
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { AppContext } from '../context/globalState';
 import { CustomAuthHeader } from "../components";
@@ -9,7 +9,7 @@ import callApi from '../utils/callApi';
 const Register = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isLoggedIn, setUser, successCallback, errorCallback } = useContext(AppContext);
+  const { isLoggedIn, setUser, successCallback, errorCallback, user } = useContext(AppContext);
   const pathname = location.pathname;
   const [registerForm] = Form.useForm();
 
@@ -20,11 +20,15 @@ const Register = () => {
   };
 
   useEffect(() => {
-    isLoggedIn && navigate("/buyer");
+    isLoggedIn && user && navigate(`/${user.role}` || "/buyer");
   }, [isLoggedIn]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const onFinish = async ({ username, password }: { username: string, password: string }) => {
-    const payload = { username, password, role: 'buyer' };
+  const onFinish = async ({ 
+    username, password, role
+  }: { 
+    username: string, password: string, role: string 
+  }) => {
+    const payload = { username, password, role };
     const response = await callApi('post', 'auth/register', payload);
     if (response?.error) {
       errorCallback(response?.error);
@@ -45,6 +49,9 @@ const Register = () => {
           className="login-form"
           onFinish={onFinish}
           validateTrigger="onSubmit"
+          initialValues={{
+            role: 'buyer'
+          }}
         >
           <Form.Item
             name="username"
@@ -113,6 +120,12 @@ const Register = () => {
               type="password"
               placeholder="Confirm password"
             />
+          </Form.Item>
+          <Form.Item name="role" rules={[{ required: true }]}>
+            <Select>
+              <Select.Option value="buyer">Buyer</Select.Option>
+              <Select.Option value="seller">Seller</Select.Option>
+            </Select>
           </Form.Item>
           <Form.Item>
             <br />

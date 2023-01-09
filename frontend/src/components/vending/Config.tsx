@@ -31,6 +31,10 @@ export const keyPad: ButtonValue[][] = [
   ["F", "*", "CLR"],
 ];
 
+export const shelves: string[] = [
+  "A", "B", "C", "D", "E", "F"
+]
+
 export type Screen = "BALANCE" | "INPUT_CODE" | "MESSAGE" | "CHANGE";
 
 export type ButtonValue =
