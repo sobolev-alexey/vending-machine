@@ -2,7 +2,7 @@ import { useContext, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { AppContext } from '../context/globalState';
 import callApi from '../utils/callApi';
-import { successCallback, errorCallback } from '../utils/notification';
+import { successCallback, errorCallback, infoCallback } from '../utils/notification';
 import { Logout, Vending } from '../components';
 
 const Buyer = () => {
@@ -19,12 +19,21 @@ const Buyer = () => {
     loadData();
   }, []); // eslint-disable-line
 
-  const depositFunds = async (deposit: number): Promise<void> => {
-    await callApi('put', 'users/deposit', { deposit });
+  const depositFunds = async (deposit: number): Promise<boolean> => {
+    const response = await callApi('put', 'users/deposit', { deposit });
+    if (response?.error) {
+      errorCallback(response?.error?.response?.data?.error);
+      return false;
+    }
+    return true;
   }
   
-  const buyProduct = async (id: string, quantity: number = 1): Promise<void> => {
+  const buyProduct = async (id: string, quantity: number = 1): Promise<boolean> => {
     const response = await callApi('post', `products/buy/${id}`, { quantity });
+    if (response?.error) {
+      errorCallback(response?.error?.response?.data?.error);
+      return false;
+    }
     const coins = [5, 10, 20, 50, 100];
     const formatter = new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" });
     const change = response?.change
@@ -41,10 +50,18 @@ const Buyer = () => {
     if (!productsResponse?.error) {
       setProducts(productsResponse);
     }
+    infoCallback('Total spent', formatter.format(response.totalSpent / 100));
+
+    return true;
   }
   
-  const resetWallet = async (): Promise<void> => {
-    await callApi('post', 'users/reset');
+  const resetWallet = async (): Promise<boolean> => {
+    const response = await callApi('post', 'users/reset');
+    if (response?.error) {
+      errorCallback(response?.error?.response?.data?.error);
+      return false;
+    }
+    return true;
   }
 
   const logoutCallback = async () => {
