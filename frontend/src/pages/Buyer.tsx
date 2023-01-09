@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { AppContext } from '../context/globalState';
 import callApi from '../utils/callApi';
@@ -6,17 +6,12 @@ import { successCallback, errorCallback } from '../utils/notification';
 import { Logout, Vending } from '../components';
 
 const Buyer = () => {
-  const { login, setProducts, logout } = useContext(AppContext);
+  const { setProducts, logout } = useContext(AppContext);
   const navigate = useNavigate();
 
   useEffect(() => {
     async function loadData() {
-      const userResponse = await callApi('get', 'users'); 
       const productsResponse = await callApi('get', 'products'); 
-
-      if (!userResponse?.error) {
-        await login({ userData: userResponse });
-      }
       if (!productsResponse?.error) {
         setProducts(productsResponse);
       }

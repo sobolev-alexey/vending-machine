@@ -61,27 +61,6 @@ function GlobalState({ children }: { children: ReactNode }) {
     });
   }
 
-  // Options API https://swr.vercel.app/docs/options
-  // const { data, error } = useSWR(`${import.meta.env.VITE_API_BASE}/users`);
-  // if (error) {
-  //   errorCallback(error);
-  // }
-
-  // const { data: availableProducts, error: priceError } = useSWR(
-  //   `${import.meta.env.VITE_API_BASE}/products`
-  // );
-  // if (priceError) {
-  //   errorCallback(priceError);
-  // }
-
-  // useEffect(() => {
-  //   availableProducts?.length && setProducts(availableProducts);
-  // }, [availableProducts]); // eslint-disable-line
-
-  // useEffect(() => {
-  //   data && setUser(data);
-  // }, [data]); // eslint-disable-line
-
   return (
     <AppContext.Provider
       value={{
