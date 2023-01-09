@@ -13,7 +13,7 @@ const Seller = () => {
 
   useEffect(() => {
     async function loadData() {
-      const productsResponse = await callApi('get', 'products'); 
+      const productsResponse = await callApi('get', 'products/seller'); 
       if (!productsResponse?.error) {
         setProducts(productsResponse);
       }

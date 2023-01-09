@@ -22,6 +22,10 @@ const ManageProducts = ({
     console.log('Click on No', e);
   };
 
+  if (!products.length) {
+    return <h3>No products</h3>
+  }
+
   return (
     <Form 
       form={productsForm}
